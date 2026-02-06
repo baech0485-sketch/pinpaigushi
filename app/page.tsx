@@ -5,7 +5,8 @@ import InputForm from "@/components/InputForm";
 import CopySection from "@/components/CopySection";
 import { ImageSection } from "@/components/ImageSection";
 import { ImageData } from "@/lib/download";
-import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { copyToClipboard } from "@/lib/clipboard";
+import { Loader2, AlertCircle, RefreshCw, Copy, Check } from "lucide-react";
 
 // Define BrandCopy interface matching the one in CopySection
 interface BrandCopy {
@@ -23,6 +24,22 @@ export default function Home() {
   const [brandCopy, setBrandCopy] = useState<BrandCopy | null>(null);
   const [images, setImages] = useState<ImageData[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [strategyCopied, setStrategyCopied] = useState(false);
+
+  const strategyText = `我们已为您创建"品牌故事"，这不只是简介，而是连接顾客心灵的情感桥梁。市场研究表明，情感连接是顾客忠诚度的首要驱动力：
+战略价值
+信任基石：透明展示您的品牌理念、食材来源和制作工艺，建立深层信任关系
+差异化定位：在千篇一律的外卖市场中，独特的品牌故事为您创造不可复制的竞争壁垒
+情感资产：品牌故事能触发顾客共鸣，将一次性消费者转化为品牌拥护者
+高端感知：专业的品牌叙事提升顾客对产品价值的感知，支持更健康的定价策略
+社区归属感：分享您的创业历程和匠心理念，让顾客感到参与品牌成长的满足感`;
+
+  const handleCopyStrategyText = async () => {
+    const success = await copyToClipboard(strategyText);
+    if (!success) return;
+    setStrategyCopied(true);
+    setTimeout(() => setStrategyCopied(false), 2000);
+  };
 
   const handleGenerate = async (data: { storeName: string; category: string }) => {
     setIsLoading(true);
@@ -138,6 +155,30 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      <section className="container mx-auto max-w-5xl px-6 pb-10">
+        <div className="bg-white/80 backdrop-blur-2xl rounded-[28px] p-6 md:p-8 shadow-2xl shadow-black/[0.03] border border-white/50">
+          <div
+            onClick={handleCopyStrategyText}
+            className="group cursor-pointer rounded-2xl border border-[#d2d2d7]/40 bg-white/70 px-5 py-5 transition-all hover:border-[#0071e3]/35 hover:shadow-lg"
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-xs font-semibold tracking-wide text-[#86868b]">品牌故事战略价值（点击复制）</p>
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  strategyCopied
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-[#f5f5f7] text-[#86868b] group-hover:bg-[#0071e3]/10 group-hover:text-[#0071e3]"
+                }`}
+              >
+                {strategyCopied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                {strategyCopied ? "已复制" : "复制文案"}
+              </span>
+            </div>
+            <p className="whitespace-pre-line text-[15px] leading-7 text-[#1d1d1f]">{strategyText}</p>
+          </div>
+        </div>
+      </section>
 
       <footer className="border-t border-[#d2d2d7]/30 bg-[#F5F5F7]/80 backdrop-blur-md">
         <div className="container mx-auto max-w-5xl px-6 py-8 text-center">
