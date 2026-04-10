@@ -128,7 +128,7 @@ JSON 结构如下：
 
     // 调用 Gemini API（支持通过 API_BASE_URL 配置网关地址）
     const apiBaseUrl = process.env.API_BASE_URL || 'https://yunwu.ai';
-    const apiUrl = `${apiBaseUrl}/v1beta/models/gemini-3-pro-preview:generateContent?key=${apiKey}`;
+    const apiUrl = `${apiBaseUrl}/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=${apiKey}`;
     
     const response = await fetch(apiUrl, {
       method: 'POST',
