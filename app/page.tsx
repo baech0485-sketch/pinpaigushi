@@ -92,12 +92,12 @@ export default function Home() {
         </div>
 
         {/* Input Section */}
-        <section className="max-w-xl mx-auto">
+        <section className="max-w-3xl mx-auto">
           <InputForm onSubmit={handleGenerate} isLoading={isLoading} />
         </section>
 
         {/* Status / Error Message */}
-        <div className="max-w-xl mx-auto text-center">
+        <div className="max-w-3xl mx-auto text-center">
           {isLoading && (
             <div className="flex flex-col items-center justify-center gap-4 py-6 animate-in fade-in slide-in-from-bottom-4">
               <Loader2 className="w-8 h-8 animate-spin text-[#0071e3]" />

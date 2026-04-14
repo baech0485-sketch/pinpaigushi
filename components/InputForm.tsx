@@ -45,7 +45,7 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white/70 backdrop-blur-2xl rounded-[32px] shadow-2xl shadow-black/[0.03] p-8 border border-white/50 transition-all duration-300 hover:shadow-black/[0.06]">
+    <div className="w-full max-w-2xl mx-auto bg-white/70 backdrop-blur-2xl rounded-[32px] shadow-2xl shadow-black/[0.03] p-8 border border-white/50 transition-all duration-300 hover:shadow-black/[0.06]">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Store Name Input */}
         <div className="space-y-3">
