@@ -21,6 +21,7 @@ interface ImageRequest {
   storeName: string;
   category: string;
   threadId?: string;
+  imageIndex?: number;
   brandCopy: BrandCopy;
 }
 
@@ -65,7 +66,7 @@ function resolveGeneratedImageName(index: number, mimeType: string): string {
 export async function POST(request: NextRequest) {
   try {
     const body: ImageRequest = await request.json();
-    const { storeName, category, brandCopy, threadId } = body;
+    const { storeName, category, brandCopy, threadId, imageIndex } = body;
 
     if (!storeName || !category || !brandCopy) {
       return NextResponse.json(
@@ -84,10 +85,21 @@ export async function POST(request: NextRequest) {
 
     const images: ImageData[] = [];
     const errors: ImageError[] = [];
+    const targetConfigs = typeof imageIndex === 'number'
+      ? BRAND_STORY_IMAGE_CONFIGS
+          .map((config, idx) => ({ config, index: idx + 1 }))
+          .filter((item) => item.index === imageIndex)
+      : BRAND_STORY_IMAGE_CONFIGS.map((config, idx) => ({ config, index: idx + 1 }));
 
-    for (let i = 0; i < BRAND_STORY_IMAGE_CONFIGS.length; i++) {
-      const config = BRAND_STORY_IMAGE_CONFIGS[i];
-      const index = i + 1;
+    if (targetConfigs.length === 0) {
+      return NextResponse.json(
+        { error: '无效的图片索引' },
+        { status: 400 }
+      );
+    }
+
+    for (const item of targetConfigs) {
+      const { config, index } = item;
 
       try {
         console.log(`开始生成第 ${index} 张图片: ${config.name}`);

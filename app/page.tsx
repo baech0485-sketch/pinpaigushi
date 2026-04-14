@@ -13,6 +13,7 @@ import type { BrandCopy, BrandStoryThreadId } from "@/lib/brand-story-types";
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState<'idle' | 'text' | 'images' | 'done'>('idle');
+  const [imageProgress, setImageProgress] = useState(0);
   const [brandCopy, setBrandCopy] = useState<BrandCopy | null>(null);
   const [images, setImages] = useState<ImageData[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -35,6 +36,7 @@ export default function Home() {
     setError(null);
     setBrandCopy(null);
     setImages([]);
+    setImageProgress(0);
 
     try {
       // 1. Generate Text
@@ -53,21 +55,45 @@ export default function Home() {
       setStep('images');
 
       // 2. Generate Images
-      const imageRes = await fetch('/api/generate-images', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          brandCopy: textData,
-        }),
-      });
+      const generatedImages: ImageData[] = [];
+      const failedImages: number[] = [];
 
-      if (!imageRes.ok) {
+      for (let imageIndex = 1; imageIndex <= 5; imageIndex += 1) {
+        setImageProgress(imageIndex);
+
+        const imageRes = await fetch('/api/generate-images', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...data,
+            brandCopy: textData,
+            imageIndex,
+          }),
+        });
+
+        if (!imageRes.ok) {
+          failedImages.push(imageIndex);
+          continue;
+        }
+
+        const imageData = await imageRes.json();
+        if (Array.isArray(imageData.images) && imageData.images.length > 0) {
+          generatedImages.push(...imageData.images);
+          setImages([...generatedImages]);
+          continue;
+        }
+
+        failedImages.push(imageIndex);
+      }
+
+      if (generatedImages.length === 0) {
         throw new Error('生成配图失败，请稍后重试');
       }
 
-      const imageData = await imageRes.json();
-      setImages(imageData.images || []);
+      if (failedImages.length > 0) {
+        setError(`部分配图生成失败：第 ${failedImages.join('、')} 张`);
+      }
+
       setStep('done');
     } catch (err) {
       console.error(err);
@@ -103,7 +129,7 @@ export default function Home() {
               <Loader2 className="w-8 h-8 animate-spin text-[#0071e3]" />
               <p className="text-[#86868b] font-medium text-lg">
                 {step === 'text' && "正在构思品牌文案..."}
-                {step === 'images' && "正在设计视觉配图... (1/5)"}
+                {step === 'images' && `正在设计视觉配图... (${imageProgress}/5)`}
               </p>
             </div>
           )}
