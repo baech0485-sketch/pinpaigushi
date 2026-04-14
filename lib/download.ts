@@ -1,8 +1,12 @@
 import JSZip from 'jszip';
+import {
+  bytesToBase64,
+  imageSourceToBytes,
+} from '@/lib/download-source';
 
 export interface ImageData {
   index: number;
-  base64: string;
+  imageUrl: string;
   mimeType: string;
   aspectRatio: string;
 }
@@ -35,25 +39,14 @@ function getTauriInvoke() {
   return tauri?.core?.invoke ?? tauri?.invoke ?? null;
 }
 
-function stripDataUriPrefix(input: string): string {
-  return input.replace(/^data:[^;]+;base64,/, '');
+function buildObjectUrl(bytes: Uint8Array, mimeType: string): string {
+  const blob = new Blob([bytes as BlobPart], { type: mimeType });
+  return URL.createObjectURL(blob);
 }
 
-function base64ToBytes(base64: string): Uint8Array {
-  const binary = atob(stripDataUriPrefix(base64));
-  const bytes = new Uint8Array(binary.length);
-  for (let index = 0; index < binary.length; index += 1) {
-    bytes[index] = binary.charCodeAt(index);
-  }
-  return bytes;
-}
-
-function bytesToBase64(bytes: Uint8Array): string {
-  let binary = '';
-  for (let index = 0; index < bytes.length; index += 1) {
-    binary += String.fromCharCode(bytes[index]);
-  }
-  return btoa(binary);
+function resolveExtension(mimeType: string): string {
+  const subtype = mimeType.split('/')[1] || 'png';
+  return subtype === 'jpeg' ? 'jpg' : subtype;
 }
 
 async function saveByTauriDialogAndFs(bytes: Uint8Array, filename: string, filters: Array<{ name: string; extensions: string[] }>) {
@@ -80,15 +73,6 @@ async function saveByTauriDialogAndFs(bytes: Uint8Array, filename: string, filte
       },
     },
   );
-}
-
-function saveByBrowser(dataUri: string, filename: string): void {
-  const link = document.createElement('a');
-  link.href = dataUri;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
 }
 
 async function requestHostExport(payload: HostExportRequest['payload']): Promise<boolean> {
@@ -132,23 +116,33 @@ async function requestHostExport(payload: HostExportRequest['payload']): Promise
   return result;
 }
 
+function saveByBrowserUrl(url: string, filename: string): void {
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+function revokeObjectUrlLater(url: string): void {
+  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 // 单张下载
-export async function downloadImage(base64: string, filename: string, mimeType: string): Promise<void> {
-  // Ensure we have a valid data URI
-  const dataUri = base64.startsWith('data:') 
-    ? base64 
-    : `data:${mimeType};base64,${base64}`;
+export async function downloadImage(imageUrl: string, filename: string, mimeType: string): Promise<void> {
+  const bytes = await imageSourceToBytes(imageUrl);
+  const base64 = bytesToBase64(bytes);
 
   const exportedByHost = await requestHostExport({
     kind: 'single',
     filename,
     mimeType,
-    base64: stripDataUriPrefix(dataUri),
+    base64,
   });
   if (exportedByHost) return;
 
   try {
-    const bytes = base64ToBytes(dataUri);
     const extension = filename.split('.').pop() || 'jpg';
     await saveByTauriDialogAndFs(bytes, filename, [
       { name: '图片文件', extensions: [extension] },
@@ -158,23 +152,20 @@ export async function downloadImage(base64: string, filename: string, mimeType: 
     // fallback to browser download
   }
 
-  saveByBrowser(dataUri, filename);
+  const objectUrl = buildObjectUrl(bytes, mimeType);
+  saveByBrowserUrl(objectUrl, filename);
+  revokeObjectUrlLater(objectUrl);
 }
 
 // 批量下载（使用 JSZip）
 export async function downloadAllImages(images: ImageData[]): Promise<void> {
   const zip = new JSZip();
-  // Create a folder or just put files in root of zip. 
-  // Requirement says "download zip". Usually better to have files in root or a folder.
-  // I'll put them in the root of the zip for simplicity unless specified otherwise.
-  
-  images.forEach((img) => {
-    // JSZip expects base64 without the data URI prefix
-    const base64Data = stripDataUriPrefix(img.base64);
-    // Determine extension from mimeType
-    const extension = img.mimeType.split('/')[1] === 'jpeg' ? 'jpg' : (img.mimeType.split('/')[1] || 'jpg');
-    zip.file(`${img.index}.${extension}`, base64Data, { base64: true });
-  });
+
+  for (const img of images) {
+    const bytes = await imageSourceToBytes(img.imageUrl);
+    const extension = resolveExtension(img.mimeType);
+    zip.file(`${img.index}.${extension}`, bytes);
+  }
 
   const zipBytes = await zip.generateAsync({ type: 'uint8array' });
   const zipBase64 = bytesToBase64(zipBytes);
@@ -195,13 +186,7 @@ export async function downloadAllImages(images: ImageData[]): Promise<void> {
     // fallback to browser download
   }
 
-  const content = await zip.generateAsync({ type: 'blob' });
-  const url = URL.createObjectURL(content);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = 'images.zip';
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  const url = buildObjectUrl(zipBytes, 'application/zip');
+  saveByBrowserUrl(url, 'images.zip');
+  revokeObjectUrlLater(url);
 }

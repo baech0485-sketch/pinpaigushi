@@ -7,16 +7,8 @@ import { ImageSection } from "@/components/ImageSection";
 import { ImageData } from "@/lib/download";
 import { copyToClipboard } from "@/lib/clipboard";
 import { Loader2, AlertCircle, RefreshCw, Copy, Check } from "lucide-react";
-
-// Define BrandCopy interface matching the one in CopySection
-interface BrandCopy {
-  mainSlogan: string;
-  subSlogan: string;
-  featureTitle: string;
-  featureContent: string;
-  detailsTitle: string;
-  details: Array<{ title: string; content: string }>;
-}
+import { BRAND_STORY_STRATEGY_TEXT } from "@/lib/brand-story-constants";
+import type { BrandCopy, BrandStoryThreadId } from "@/lib/brand-story-types";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,22 +18,18 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [strategyCopied, setStrategyCopied] = useState(false);
 
-  const strategyText = `我们已为您创建"品牌故事"，这不只是简介，而是连接顾客心灵的情感桥梁。市场研究表明，情感连接是顾客忠诚度的首要驱动力：
-战略价值
-信任基石：透明展示您的品牌理念、食材来源和制作工艺，建立深层信任关系
-差异化定位：在千篇一律的外卖市场中，独特的品牌故事为您创造不可复制的竞争壁垒
-情感资产：品牌故事能触发顾客共鸣，将一次性消费者转化为品牌拥护者
-高端感知：专业的品牌叙事提升顾客对产品价值的感知，支持更健康的定价策略
-社区归属感：分享您的创业历程和匠心理念，让顾客感到参与品牌成长的满足感`;
-
   const handleCopyStrategyText = async () => {
-    const success = await copyToClipboard(strategyText);
+    const success = await copyToClipboard(BRAND_STORY_STRATEGY_TEXT);
     if (!success) return;
     setStrategyCopied(true);
     setTimeout(() => setStrategyCopied(false), 2000);
   };
 
-  const handleGenerate = async (data: { storeName: string; category: string }) => {
+  const handleGenerate = async (data: {
+    storeName: string;
+    category: string;
+    threadId: BrandStoryThreadId;
+  }) => {
     setIsLoading(true);
     setStep('text');
     setError(null);
@@ -175,7 +163,7 @@ export default function Home() {
                 {strategyCopied ? "已复制" : "复制文案"}
               </span>
             </div>
-            <p className="whitespace-pre-line text-[15px] leading-7 text-[#1d1d1f]">{strategyText}</p>
+            <p className="whitespace-pre-line text-[15px] leading-7 text-[#1d1d1f]">{BRAND_STORY_STRATEGY_TEXT}</p>
           </div>
         </div>
       </section>

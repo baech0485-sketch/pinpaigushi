@@ -67,7 +67,7 @@ export function ImageSection({ images }: ImageSectionProps) {
           <ImageCard
             key={img.index}
             index={img.index}
-            base64={img.base64}
+            imageUrl={img.imageUrl}
             mimeType={img.mimeType}
             aspectRatio={img.aspectRatio}
             label={LABELS[img.index] || `配图 ${img.index}`}

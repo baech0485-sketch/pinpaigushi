@@ -1,32 +1,33 @@
 import React from 'react';
+import Image from 'next/image';
 import { Download } from 'lucide-react';
 import { downloadImage } from '@/lib/download';
 
 interface ImageCardProps {
   index: number;        // 1-5
-  base64: string;
+  imageUrl: string;
   mimeType: string;
   aspectRatio: string;
   label: string;        // 如"主文案配图"
 }
 
-export function ImageCard({ index, base64, mimeType, aspectRatio, label }: ImageCardProps) {
+export function ImageCard({ index, imageUrl, mimeType, aspectRatio, label }: ImageCardProps) {
   const handleDownload = async () => {
     const extension = mimeType.split('/')[1] === 'jpeg' ? 'jpg' : (mimeType.split('/')[1] || 'jpg');
-    await downloadImage(base64, `${index}.${extension}`, mimeType);
+    await downloadImage(imageUrl, `${index}.${extension}`, mimeType);
   };
-
-  // Construct data URI for display
-  const imgSrc = base64.startsWith('data:') ? base64 : `data:${mimeType};base64,${base64}`;
 
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
       {/* Image Container */}
       <div className="relative w-full overflow-hidden bg-gray-50" style={{ aspectRatio }}>
-        <img 
-          src={imgSrc} 
+        <Image
+          src={imageUrl}
           alt={label}
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          fill
+          unoptimized
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         
         {/* Overlay Gradient */}

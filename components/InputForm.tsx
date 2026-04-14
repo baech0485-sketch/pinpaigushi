@@ -2,15 +2,18 @@
 
 import React, { useState } from 'react';
 import { Store, Tag, Loader2, Sparkles } from 'lucide-react';
+import ThreadSelector from '@/components/ThreadSelector';
+import type { BrandStoryThreadId } from '@/lib/brand-story-types';
 
 interface InputFormProps {
-  onSubmit: (data: { storeName: string; category: string }) => void;
+  onSubmit: (data: { storeName: string; category: string; threadId: BrandStoryThreadId }) => void;
   isLoading: boolean;
 }
 
 export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
   const [storeName, setStoreName] = useState('');
   const [category, setCategory] = useState('');
+  const [threadId, setThreadId] = useState<BrandStoryThreadId>('thread1');
   const [errors, setErrors] = useState<{ storeName?: string; category?: string }>({});
 
   const validate = () => {
@@ -37,7 +40,7 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      onSubmit({ storeName, category });
+      onSubmit({ storeName, category, threadId });
     }
   };
 
@@ -123,6 +126,8 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
             </p>
           )}
         </div>
+
+        <ThreadSelector value={threadId} onChange={setThreadId} />
 
         {/* Submit Button */}
         <button

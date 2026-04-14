@@ -1,3 +1,10 @@
+interface TauriLike {
+  core?: {
+    invoke?: (command: string, args?: unknown, options?: unknown) => Promise<unknown>;
+  };
+  invoke?: (command: string, args?: unknown, options?: unknown) => Promise<unknown>;
+}
+
 export async function copyToClipboard(text: string): Promise<boolean> {
   if (!text) return false;
 
@@ -13,7 +20,7 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   }
 
   try {
-    const tauriGlobal = (window as any).__TAURI__;
+    const tauriGlobal = (window as Window & { __TAURI__?: TauriLike }).__TAURI__;
     const invoke = tauriGlobal?.core?.invoke ?? tauriGlobal?.invoke;
 
     if (typeof invoke === 'function') {
