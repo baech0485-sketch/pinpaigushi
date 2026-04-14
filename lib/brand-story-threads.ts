@@ -31,7 +31,7 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
     name: '线路1',
     description: '当前默认线路',
     protocol: 'gemini',
-    textModel: 'gemini-3.1-flash-lite-preview',
+    textModel: 'gemini-3-flash-preview',
     imageModel: 'gemini-2.5-flash-image',
   },
   {
@@ -39,7 +39,7 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
     name: '线路2',
     description: 'AICohere OpenAI兼容线路',
     protocol: 'openai',
-    textModel: 'gemini-3.1-flash-lite-preview',
+    textModel: 'gemini-3-flash-preview',
     imageModel: 'gemini-2.5-flash-image',
   },
   {

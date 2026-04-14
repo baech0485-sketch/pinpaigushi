@@ -2,7 +2,7 @@ import type { BrandStoryThreadRuntimeConfig } from '@/lib/brand-story-threads';
 
 interface OpenAiTextMessage {
   role: 'system' | 'user';
-  content: string;
+  content: string | Array<{ type?: string; text?: string }>;
 }
 
 interface OpenAiTextResponse {
@@ -141,6 +141,14 @@ function buildGeminiImageRequest(prompt: string, aspectRatio: string) {
   };
 }
 
+function buildOpenAiImageConfigMessage(aspectRatio: string): string {
+  return JSON.stringify({
+    imageConfig: {
+      aspectRatio,
+    },
+  });
+}
+
 function extractGeminiImageResponse(response: GeminiImageResponse) {
   const parts = response.candidates?.[0]?.content?.parts || [];
   const inlineData = parts.find((part) => part.inlineData?.data)?.inlineData;
@@ -177,6 +185,7 @@ export function buildBrandStoryTextApiRequest(
         model: config.textModel,
         messages,
         temperature: 0.8,
+        stream: false,
       },
     };
   }
@@ -239,12 +248,22 @@ export function buildBrandStoryImageApiRequest(
         model: config.imageModel,
         messages: [
           {
+            role: 'system',
+            content: buildOpenAiImageConfigMessage(aspectRatio),
+          },
+          {
             role: 'user',
             content: [{ type: 'text', text: prompt }],
           },
         ],
-        max_tokens: 4096,
+        max_tokens: 150,
         temperature: 0.7,
+        stream: false,
+        extra_body: {
+          imageConfig: {
+            aspectRatio,
+          },
+        },
       },
     };
   }
