@@ -15,7 +15,7 @@ import {
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60;
+export const maxDuration = 400;
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: textRequest.headers,
       body: JSON.stringify(textRequest.body),
-      signal: AbortSignal.timeout(45000),
+      signal: AbortSignal.timeout(400000),
     });
 
     if (!response.ok) {
