@@ -45,10 +45,10 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
   {
     id: 'thread3',
     name: '线路3',
-    description: 'VectorEngine Gemini线路',
+    description: 'VectorEngine线路',
     protocol: 'gemini',
     textModel: 'gemini-3.1-flash-lite-preview',
-    imageModel: 'gemini-2.5-flash-image',
+    imageModel: 'gemini-3.1-flash-image-preview',
   },
 ];
 
