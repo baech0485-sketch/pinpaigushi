@@ -45,6 +45,9 @@ export function ImageSection({ images }: ImageSectionProps) {
           <p className="text-[15px] text-[#86868b]">
             已生成 {images.length} 张高品质配图，可直接商用
           </p>
+          <p className="text-sm font-semibold leading-6 text-[#d92d20]">
+            提示：少量图片未生成也没关系，可直接复用已生成图片替换缺失位置，不影响整体展示与使用。
+          </p>
         </div>
         
         <button
