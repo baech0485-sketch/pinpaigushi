@@ -15,7 +15,7 @@ import { storeBrandStoryImage } from '@/lib/brand-story-image-storage';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 400;
+export const maxDuration = 300;
 
 interface ImageRequest {
   storeName: string;
@@ -46,7 +46,7 @@ async function generateSingleImage(
     method: 'POST',
     headers: requestConfig.headers,
     body: JSON.stringify(requestConfig.body),
-    signal: AbortSignal.timeout(400000),
+    signal: AbortSignal.timeout(290000),
   });
 
   if (!response.ok) {
