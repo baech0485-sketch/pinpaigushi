@@ -2,6 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { Download } from 'lucide-react';
 import { downloadImage } from '@/lib/download';
+import { toCssAspectRatio } from '@/lib/aspect-ratio';
 
 interface ImageCardProps {
   index: number;        // 1-5
@@ -17,10 +18,12 @@ export function ImageCard({ index, imageUrl, mimeType, aspectRatio, label }: Ima
     await downloadImage(imageUrl, `${index}.${extension}`, mimeType);
   };
 
+  const cssAspectRatio = toCssAspectRatio(aspectRatio);
+
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition-all duration-500 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-1">
       {/* Image Container */}
-      <div className="relative w-full overflow-hidden bg-gray-50" style={{ aspectRatio }}>
+      <div className="relative w-full overflow-hidden bg-gray-50" style={{ aspectRatio: cssAspectRatio }}>
         <Image
           src={imageUrl}
           alt={label}
