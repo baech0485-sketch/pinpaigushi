@@ -29,7 +29,7 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
   {
     id: 'thread1',
     name: '线路1',
-    description: '当前默认线路',
+    description: 'yunwu-API',
     protocol: 'gemini',
     textModel: 'gemini-3-flash-preview',
     imageModel: 'gemini-2.5-flash-image',
@@ -37,7 +37,7 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
   {
     id: 'thread2',
     name: '线路2',
-    description: 'AICohere OpenAI兼容线路',
+    description: '糖果-API',
     protocol: 'openai',
     textModel: 'gemini-3-flash-preview',
     imageModel: 'gemini-2.5-flash-image',
@@ -45,7 +45,7 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
   {
     id: 'thread3',
     name: '线路3',
-    description: 'VectorEngine线路',
+    description: '向量-API',
     protocol: 'gemini',
     textModel: 'gemini-3.1-flash-lite-preview',
     imageModel: 'gemini-3.1-flash-image-preview',

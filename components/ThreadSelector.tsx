@@ -15,17 +15,17 @@ const DEFAULT_AVAILABILITY: BrandStoryThreadAvailability = {
   thread1: {
     available: true,
     name: '线路1',
-    description: '当前默认线路',
+    description: 'yunwu-API',
   },
   thread2: {
     available: true,
     name: '线路2',
-    description: '备用线路 A',
+    description: '糖果-API',
   },
   thread3: {
     available: true,
     name: '线路3',
-    description: '备用线路 B',
+    description: '向量-API',
   },
 };
 
