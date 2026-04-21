@@ -8,4 +8,6 @@ test('线路选择器默认展示新的线路说明文案', () => {
   assert.match(source, /description: 'yunwu-API'/);
   assert.match(source, /description: '糖果-API'/);
   assert.match(source, /description: '向量-API'/);
+  assert.match(source, /description: '128API'/);
+  assert.match(source, /'thread1', 'thread2', 'thread3', 'thread4'/);
 });

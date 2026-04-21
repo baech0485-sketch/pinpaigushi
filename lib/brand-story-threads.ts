@@ -50,6 +50,14 @@ export const BRAND_STORY_THREAD_DEFINITIONS: BrandStoryThreadDefinition[] = [
     textModel: 'gemini-3.1-flash-lite-preview',
     imageModel: 'gemini-3.1-flash-image-preview',
   },
+  {
+    id: 'thread4',
+    name: '线路4',
+    description: '128API',
+    protocol: 'openai',
+    textModel: 'gemini-3-flash-preview',
+    imageModel: 'gemini-3.1-flash-image',
+  },
 ];
 
 const THREAD_MAP = Object.fromEntries(
@@ -57,7 +65,7 @@ const THREAD_MAP = Object.fromEntries(
 ) as Record<BrandStoryThreadId, BrandStoryThreadDefinition>;
 
 export function getBrandStoryThread(threadId?: string): BrandStoryThreadDefinition {
-  if (threadId === 'thread2' || threadId === 'thread3') {
+  if (threadId === 'thread2' || threadId === 'thread3' || threadId === 'thread4') {
     return THREAD_MAP[threadId];
   }
 
@@ -78,6 +86,20 @@ function getThreadRuntimeEnv(threadId: BrandStoryThreadId) {
       baseUrl: process.env.BRAND_STORY_THREAD3_BASE_URL || 'https://api.vectorengine.ai',
       textApiKey: process.env.BRAND_STORY_THREAD3_TEXT_API_KEY || '',
       imageApiKey: process.env.BRAND_STORY_THREAD3_IMAGE_API_KEY || '',
+    };
+  }
+
+  if (threadId === 'thread4') {
+    const sharedApiKey =
+      process.env.BRAND_STORY_THREAD4_API_KEY || process.env.NEW_PICTURE_WALL_128API_KEY || '';
+
+    return {
+      baseUrl:
+        process.env.BRAND_STORY_THREAD4_BASE_URL ||
+        process.env.NEW_PICTURE_WALL_128API_BASE_URL ||
+        'https://128api.cn/v1',
+      textApiKey: process.env.BRAND_STORY_THREAD4_TEXT_API_KEY || sharedApiKey,
+      imageApiKey: process.env.BRAND_STORY_THREAD4_IMAGE_API_KEY || sharedApiKey,
     };
   }
 
@@ -130,6 +152,7 @@ export function getBrandStoryThreadAvailability(): BrandStoryThreadAvailability 
     thread1: toAvailabilityItem('thread1'),
     thread2: toAvailabilityItem('thread2'),
     thread3: toAvailabilityItem('thread3'),
+    thread4: toAvailabilityItem('thread4'),
   };
 }
 

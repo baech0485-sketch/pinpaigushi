@@ -12,7 +12,7 @@ export interface BrandCopy {
   details: BrandCopyDetail[];
 }
 
-export type BrandStoryThreadId = 'thread1' | 'thread2' | 'thread3';
+export type BrandStoryThreadId = 'thread1' | 'thread2' | 'thread3' | 'thread4';
 export type BrandStoryThreadProtocol = 'gemini' | 'openai';
 
 export interface BrandStoryThreadAvailabilityItem {
@@ -25,4 +25,5 @@ export interface BrandStoryThreadAvailability {
   thread1: BrandStoryThreadAvailabilityItem;
   thread2: BrandStoryThreadAvailabilityItem;
   thread3: BrandStoryThreadAvailabilityItem;
+  thread4: BrandStoryThreadAvailabilityItem;
 }

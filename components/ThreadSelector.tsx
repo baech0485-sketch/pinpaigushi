@@ -27,6 +27,11 @@ const DEFAULT_AVAILABILITY: BrandStoryThreadAvailability = {
     name: '线路3',
     description: '向量-API',
   },
+  thread4: {
+    available: true,
+    name: '线路4',
+    description: '128API',
+  },
 };
 
 export default function ThreadSelector({ value, onChange }: ThreadSelectorProps) {
@@ -48,8 +53,8 @@ export default function ThreadSelector({ value, onChange }: ThreadSelectorProps)
         <p className="text-sm text-[#86868b]">文案和图片会同时使用所选线路生成</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        {(['thread1', 'thread2', 'thread3'] as BrandStoryThreadId[]).map((threadId) => {
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {(['thread1', 'thread2', 'thread3', 'thread4'] as BrandStoryThreadId[]).map((threadId) => {
           const item = availability[threadId];
           const selected = value === threadId;
 
